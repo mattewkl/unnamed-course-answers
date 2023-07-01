@@ -94,15 +94,44 @@ export default ProtectedRouteElement;
 
 // App.js
 import React from 'react';
-import { Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import Header from './Header';
+import Diary from './Diary';
+import Tips from './Tips';
+import Register from './Register';
+import Login from './Login';
+import NavBar from './NavBar';
+import './styles/App.css';
+import ProtectedRouteElement from "./ProtectedRoute"
 
-const ProtectedRouteElement = ({ element: Component, ...props }) => {
-  return (
-    props.loggedIn ? <Component {...props} /> : <Navigate to="/login" replace />
-  )
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loggedIn: false
+    }
+  }
+  render() {
+    return (
+      <BrowserRouter>
+        <Header />
+        <main className="content">
+          {this.state.loggedIn && <NavBar />}
+          <Routes>
+
+            <Route path="/" element={this.state.loggedIn ? <Navigate to="/diary" replace /> : <Navigate to="/login" replace />} />
+            <Route path="/diary" element={<ProtectedRouteElement element={Diary} loggedIn={this.state.loggedIn} />} />
+            <Route path="/tips" element={<ProtectedRouteElement element={Tips} loggedIn={this.state.loggedIn} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    );
+  }
 }
 
-export default ProtectedRouteElement;
+export default App;
 
 // 7.1
 // auth.js
